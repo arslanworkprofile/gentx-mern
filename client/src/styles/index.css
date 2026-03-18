@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: #fafafa; color: #0a0a0a; }
+
+  ::selection { background: #c9a96e; color: #0a0a0a; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #f7f7f7; }
+  ::-webkit-scrollbar-thumb { background: #bdbdbd; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #0a0a0a; }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-black text-white font-sans font-medium tracking-widest text-xs uppercase px-8 py-3.5
+           transition-all duration-300 hover:bg-accent hover:text-black active:scale-95;
+  }
+  .btn-secondary {
+    @apply border border-black text-black font-sans font-medium tracking-widest text-xs uppercase px-8 py-3.5
+           transition-all duration-300 hover:bg-black hover:text-white active:scale-95;
+  }
+  .btn-accent {
+    @apply bg-accent text-black font-sans font-medium tracking-widest text-xs uppercase px-8 py-3.5
+           transition-all duration-300 hover:bg-accent-dark active:scale-95;
+  }
+  .input-field {
+    @apply w-full border border-gray-200 bg-white px-4 py-3 text-sm font-sans text-black
+           placeholder-gray-400 outline-none transition-all duration-200
+           focus:border-black focus:ring-0;
+  }
+  .label-field {
+    @apply block text-xs font-medium tracking-widest uppercase text-gray-600 mb-1.5;
+  }
+  .card-hover {
+    @apply transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl;
+  }
+  .section-title {
+    @apply font-display text-3xl md:text-4xl font-semibold text-black leading-tight;
+  }
+  .section-subtitle {
+    @apply text-xs tracking-[0.2em] uppercase text-accent font-medium;
+  }
+  .badge {
+    @apply inline-block text-[10px] tracking-widest uppercase font-medium px-2.5 py-1;
+  }
+  .badge-new   { @apply badge bg-accent text-black; }
+  .badge-sale  { @apply badge bg-black text-white; }
+  .badge-stock { @apply badge bg-gray-100 text-gray-600; }
+
+  .admin-card {
+    @apply bg-white border border-gray-100 p-6 shadow-sm;
+  }
+  .table-cell { @apply px-4 py-3 text-sm; }
+  .status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 text-[11px] font-medium tracking-wider uppercase;
+  }
+  .spinner {
+    @apply animate-spin rounded-full border-2 border-gray-200 border-t-black;
+  }
+}
+
+/* Animations */
+.animate-on-scroll { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
+
+/* Product image zoom */
+.product-img-wrap { overflow: hidden; }
+.product-img-wrap img { transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+.product-img-wrap:hover img { transform: scale(1.07); }
+
+/* Drawer overlay */
+.drawer-overlay { animation: fadeIn 0.25s ease; }
+.drawer-panel   { animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+
+@keyframes fadeIn  { from { opacity: 0 } to { opacity: 1 } }
+@keyframes slideIn { from { transform: translateX(100%) } to { transform: translateX(0) } }
+
+/* Page transitions */
+.page-enter { animation: fadeUp 0.5s ease forwards; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px) } to { opacity: 1; transform: translateY(0) } }
