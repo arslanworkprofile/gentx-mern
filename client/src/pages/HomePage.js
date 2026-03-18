@@ -25,7 +25,7 @@ export default function HomePage() {
       {/* ── Hero ─────────────────────────────────────────── */}
       <section className="relative h-screen min-h-[600px] flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          <img src="https://images.unsplash.com/photo-1490551902236-7231eb14e87c?w=1600&h=1000&fit=crop" alt="Gent X Hero"
+          <img src="image1.png" alt="Gent X Hero"
             className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
         </div>

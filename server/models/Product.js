@@ -41,3 +41,4 @@ productSchema.methods.updateRating = function () {
 };
 
 module.exports = mongoose.model('Product', productSchema);
+
