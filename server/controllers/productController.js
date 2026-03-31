@@ -15,7 +15,7 @@ exports.getProducts = asyncHandler(async (req, res) => {
   if (req.query.color)    q.colors    = { $in: [req.query.color] };
   if (req.query.size)     q.sizes     = { $in: [req.query.size] };
   if (req.query.featured === 'true') q.featured = true;
-  if (req.query.isNew    === 'true') q.isNew    = true;
+  if (req.query.isNew    === 'true') q.isNewArrival = true;
   if (req.query.minPrice || req.query.maxPrice) {
     q.price = {};
     if (req.query.minPrice) q.price.$gte = +req.query.minPrice;
@@ -52,7 +52,7 @@ exports.getProductById = asyncHandler(async (req, res) => {
 
 // POST /api/products
 exports.createProduct = asyncHandler(async (req, res) => {
-  const { name, description, price, discountPrice, category, brand, colors, sizes, variants, stock, featured, isNew, tags } = req.body;
+  const { name, description, price, discountPrice, category, brand, colors, sizes, variants, stock, featured, isNewArrival, tags } = req.body;
   if (!name || !description || !price || !category) { res.status(400); throw new Error('Name, description, price, category required'); }
   let images = [];
   if (req.files?.length) {
@@ -67,7 +67,7 @@ exports.createProduct = asyncHandler(async (req, res) => {
     category, brand: brand || 'Gent X', images,
     colors: parseJSON(colors), sizes: parseJSON(sizes),
     variants: parseJSON(variants), stock: +stock || 0,
-    featured: featured === 'true', isNew: isNew !== 'false',
+    featured: featured === 'true', isNewArrival: isNewArrival !== 'false',
     tags: parseJSON(tags),
   });
   res.status(201).json({ success: true, product });
@@ -77,7 +77,7 @@ exports.createProduct = asyncHandler(async (req, res) => {
 exports.updateProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
   if (!product) { res.status(404); throw new Error('Product not found'); }
-  const fields = ['name','description','category','brand','stock','featured','isNew'];
+  const fields = ['name','description','category','brand','stock','featured','isNewArrival'];
   fields.forEach(f => { if (req.body[f] !== undefined) product[f] = req.body[f]; });
   if (req.body.price)         product.price         = +req.body.price;
   if (req.body.discountPrice !== undefined) product.discountPrice = +req.body.discountPrice;

@@ -119,6 +119,7 @@ export default function AdminDashboard() {
           ['View Orders',   '/admin/orders',       '📋'],
           ['Manage Users',  '/admin/users',        '👥'],
           ['All Products',  '/admin/products',     '🏷️'],
+        ['Site Settings', '/admin/settings',     '⚙️'],
         ].map(([label, to, icon]) => (
           <Link key={label} to={to} className="admin-card flex flex-col items-center gap-3 text-center hover:border-accent transition-colors border border-gray-100 group">
             <span className="text-3xl">{icon}</span>

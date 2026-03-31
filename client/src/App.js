@@ -38,6 +38,7 @@ import AdminProductForm from './pages/admin/AdminProductForm';
 import AdminOrders      from './pages/admin/AdminOrders';
 import AdminOrderDetail from './pages/admin/AdminOrderDetail';
 import AdminUsers       from './pages/admin/AdminUsers';
+import AdminSettings    from './pages/admin/AdminSettings';
 
 import './styles/index.css';
 
@@ -78,6 +79,7 @@ const AppInner = () => {
           <Route path="orders"            element={<AdminOrders />} />
           <Route path="orders/:id"        element={<AdminOrderDetail />} />
           <Route path="users"             element={<AdminUsers />} />
+          <Route path="settings"          element={<AdminSettings />} />
         </Route>
 
         {/* ── Public (with nav/footer) ── */}

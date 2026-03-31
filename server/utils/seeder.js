@@ -15,7 +15,7 @@ const products = [
     price: 89.99, discountPrice: 74.99, category: 'shirts', brand: 'Gent X',
     images: [{ url: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600', public_id: 'p1a' }, { url: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600', public_id: 'p1b' }],
     colors: ['Black', 'White', 'Charcoal'], sizes: ['S','M','L','XL','XXL'],
-    stock: 80, featured: true, isNew: true, rating: 4.8, numReviews: 34, sold: 120,
+    stock: 80, featured: true, isNewArrival: true, rating: 4.8, numReviews: 34, sold: 120,
     tags: ['shirt', 'slim-fit', 'cotton', 'premium'],
   },
   {
@@ -24,7 +24,7 @@ const products = [
     price: 129.99, discountPrice: 0, category: 'pants', brand: 'Gent X',
     images: [{ url: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=600', public_id: 'p2a' }],
     colors: ['Black', 'Navy', 'Charcoal', 'Stone'], sizes: ['28','30','32','34','36'],
-    stock: 55, featured: true, isNew: false, rating: 4.6, numReviews: 21, sold: 88,
+    stock: 55, featured: true, isNewArrival: false, rating: 4.6, numReviews: 21, sold: 88,
     tags: ['pants', 'trousers', 'formal', 'tailored'],
   },
   {
@@ -33,7 +33,7 @@ const products = [
     price: 349.99, discountPrice: 299.99, category: 'jackets', brand: 'Gent X',
     images: [{ url: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600', public_id: 'p3a' }, { url: 'https://images.unsplash.com/photo-1521223890158-f9f7c3d5d504?w=600', public_id: 'p3b' }],
     colors: ['Black', 'Dark Brown'], sizes: ['S','M','L','XL'],
-    stock: 20, featured: true, isNew: false, rating: 4.9, numReviews: 47, sold: 65,
+    stock: 20, featured: true, isNewArrival: false, rating: 4.9, numReviews: 47, sold: 65,
     tags: ['jacket', 'leather', 'premium', 'luxury'],
   },
   {
@@ -42,7 +42,7 @@ const products = [
     price: 219.99, discountPrice: 179.99, category: 'shoes', brand: 'Gent X',
     images: [{ url: 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=600', public_id: 'p4a' }],
     colors: ['Black', 'Tan', 'Burgundy'], sizes: ['40','41','42','43','44','45'],
-    stock: 35, featured: true, isNew: true, rating: 4.7, numReviews: 28, sold: 74,
+    stock: 35, featured: true, isNewArrival: true, rating: 4.7, numReviews: 28, sold: 74,
     tags: ['shoes', 'oxford', 'leather', 'formal'],
   },
   {
@@ -51,7 +51,7 @@ const products = [
     price: 109.99, discountPrice: 89.99, category: 'hoodies', brand: 'Gent X',
     images: [{ url: 'https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600', public_id: 'p5a' }, { url: 'https://images.unsplash.com/photo-1578768079052-aa76e52ff62e?w=600', public_id: 'p5b' }],
     colors: ['Charcoal', 'Black', 'Off-White', 'Slate'], sizes: ['S','M','L','XL','XXL'],
-    stock: 100, featured: false, isNew: true, rating: 4.5, numReviews: 52, sold: 210,
+    stock: 100, featured: false, isNewArrival: true, rating: 4.5, numReviews: 52, sold: 210,
     tags: ['hoodie', 'casual', 'cotton', 'streetwear'],
   },
   {
@@ -60,7 +60,7 @@ const products = [
     price: 599.99, discountPrice: 499.99, category: 'suits', brand: 'Gent X',
     images: [{ url: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600', public_id: 'p6a' }],
     colors: ['Charcoal', 'Navy', 'Black'], sizes: ['S','M','L','XL'],
-    stock: 15, featured: true, isNew: false, rating: 4.9, numReviews: 18, sold: 32,
+    stock: 15, featured: true, isNewArrival: false, rating: 4.9, numReviews: 18, sold: 32,
     tags: ['suit', 'formal', 'wool', 'luxury', 'office'],
   },
   {
@@ -69,7 +69,7 @@ const products = [
     price: 79.99, discountPrice: 0, category: 'casual', brand: 'Gent X',
     images: [{ url: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600', public_id: 'p7a' }],
     colors: ['Beige', 'Navy', 'Olive', 'Black'], sizes: ['28','30','32','34','36'],
-    stock: 70, featured: false, isNew: true, rating: 4.4, numReviews: 31, sold: 145,
+    stock: 70, featured: false, isNewArrival: true, rating: 4.4, numReviews: 31, sold: 145,
     tags: ['chinos', 'casual', 'slim', 'stretch'],
   },
   {
@@ -78,7 +78,7 @@ const products = [
     price: 249.99, discountPrice: 199.99, category: 'accessories', brand: 'Gent X',
     images: [{ url: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600', public_id: 'p8a' }, { url: 'https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=600', public_id: 'p8b' }],
     colors: ['Black', 'Silver'], sizes: ['One Size'],
-    stock: 25, featured: false, isNew: false, rating: 4.8, numReviews: 39, sold: 56,
+    stock: 25, featured: false, isNewArrival: false, rating: 4.8, numReviews: 39, sold: 56,
     tags: ['watch', 'accessories', 'luxury', 'minimalist'],
   },
 ];

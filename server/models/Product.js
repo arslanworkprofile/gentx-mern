@@ -27,7 +27,7 @@ const productSchema = new mongoose.Schema({
   rating:      { type: Number, default: 0 },
   numReviews:  { type: Number, default: 0 },
   featured:    { type: Boolean, default: false },
-  isNew:       { type: Boolean, default: true },
+  isNewArrival: { type: Boolean, default: true },
   tags:        [String],
   isActive:    { type: Boolean, default: true },
 }, { timestamps: true });
@@ -41,4 +41,3 @@ productSchema.methods.updateRating = function () {
 };
 
 module.exports = mongoose.model('Product', productSchema);
-

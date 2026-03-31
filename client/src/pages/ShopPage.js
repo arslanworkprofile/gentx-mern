@@ -2,10 +2,9 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../store/slices/productSlice';
+import { fetchSettings } from '../store/slices/settingsSlice';
 import ProductCard from '../components/shop/ProductCard';
 import { Pagination, PageSpinner, EmptyState } from '../components/common/UI';
-
-const CATEGORIES = ['shirts','pants','jackets','shoes','accessories','hoodies','suits','casual','formal','other'];
 const SIZES      = ['XS','S','M','L','XL','XXL','28','30','32','34','36','40','41','42','43','44','45','One Size'];
 const COLORS     = ['Black','White','Charcoal','Navy','Brown','Tan','Burgundy','Beige','Olive','Grey','Slate','Off-White'];
 const SORTS      = [
@@ -19,6 +18,8 @@ const SORTS      = [
 export default function ShopPage() {
   const dispatch = useDispatch();
   const { products, loading, page, pages, total } = useSelector(s => s.product);
+  const { settings } = useSelector(s => s.settings);
+  const CATEGORIES = (settings?.categories || []).filter(c => c.active).map(c => c.value);
   const [searchParams, setSearchParams] = useSearchParams();
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -43,6 +44,8 @@ export default function ShopPage() {
     Object.keys(query).forEach(k => { if (!query[k]) delete query[k]; });
     dispatch(fetchProducts(query));
   }, [dispatch, setSearchParams]);
+
+  useEffect(() => { dispatch(fetchSettings()); }, []);
 
   useEffect(() => {
     const f = {
