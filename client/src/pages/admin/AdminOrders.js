@@ -16,82 +16,114 @@ export default function AdminOrders() {
   }, [dispatch, currentPage, statusFilter]);
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this order? This cannot be undone.')) return;
+    if (!window.confirm('Delete this order?')) return;
     try { await dispatch(deleteOrder(id)).unwrap(); toast.success('Order deleted'); }
     catch (e) { toast.error(e || 'Delete failed'); }
   };
 
   return (
     <div>
-      <div className="mb-8">
+      <div className="mb-6">
         <p className="text-xs text-gray-400 tracking-widest uppercase mb-1">Manage</p>
-        <h1 className="font-display text-3xl font-semibold">Orders</h1>
+        <h1 className="font-display text-2xl md:text-3xl font-semibold">Orders</h1>
       </div>
 
-      <div className="admin-card mb-6">
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex gap-2 flex-wrap">
-            {['','pending','processing','shipped','delivered','cancelled'].map(s => (
-              <button key={s} onClick={() => { setStatusFilter(s); setCurrentPage(1); }}
-                className={`px-3 py-1.5 text-xs tracking-widest uppercase border transition-colors ${statusFilter === s ? 'bg-black text-white border-black' : 'border-gray-200 hover:border-gray-600'}`}>
-                {s || 'All'}
-              </button>
-            ))}
-          </div>
+      {/* Filters */}
+      <div className="admin-card mb-4">
+        <div className="flex flex-wrap items-center gap-2">
+          {['','pending','processing','shipped','delivered','cancelled'].map(s => (
+            <button key={s} onClick={() => { setStatusFilter(s); setCurrentPage(1); }}
+              className={`px-2.5 py-1 text-[10px] md:text-xs tracking-widest uppercase border transition-colors ${statusFilter === s ? 'bg-black text-white border-black' : 'border-gray-200 hover:border-gray-600'}`}>
+              {s || 'All'}
+            </button>
+          ))}
           <p className="text-xs text-gray-400 ml-auto">{total} orders</p>
         </div>
       </div>
 
       {loading ? <PageSpinner /> : (
-        <div className="admin-card overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-100 text-xs tracking-widest uppercase text-gray-400">
-                <th className="text-left table-cell">Order</th>
-                <th className="text-left table-cell hidden md:table-cell">Customer</th>
-                <th className="text-left table-cell hidden sm:table-cell">Date</th>
-                <th className="text-left table-cell">Status</th>
-                <th className="text-left table-cell">Total</th>
-                <th className="text-left table-cell hidden md:table-cell">Paid</th>
-                <th className="text-right table-cell">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {orders.map(order => (
-                <tr key={order._id} className="hover:bg-gray-50 transition-colors">
-                  <td className="table-cell">
-                    <Link to={`/admin/orders/${order._id}`} className="font-mono text-xs font-medium hover:text-accent transition-colors">
-                      #{order._id.slice(-8).toUpperCase()}
-                    </Link>
-                    <p className="text-xs text-gray-400">{order.orderItems?.length} item(s)</p>
-                  </td>
-                  <td className="table-cell hidden md:table-cell">
-                    <p className="font-medium">{order.user?.name || 'Unknown'}</p>
-                    <p className="text-xs text-gray-400">{order.user?.email}</p>
-                  </td>
-                  <td className="table-cell hidden sm:table-cell text-gray-500 text-xs">
-                    {new Date(order.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="table-cell"><StatusBadge status={order.orderStatus} /></td>
-                  <td className="table-cell font-semibold">${order.totalPrice?.toFixed(2)}</td>
-                  <td className="table-cell hidden md:table-cell">
-                    <span className={`text-xs font-medium ${order.isPaid ? 'text-green-600' : 'text-gray-400'}`}>
-                      {order.isPaid ? '✓ Paid' : 'Pending'}
-                    </span>
-                  </td>
-                  <td className="table-cell text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Link to={`/admin/orders/${order._id}`} className="text-xs border border-gray-200 px-3 py-1.5 hover:border-black transition-colors tracking-widest uppercase">View</Link>
-                      <button onClick={() => handleDelete(order._id)} className="text-xs border border-red-100 text-red-400 px-3 py-1.5 hover:bg-red-500 hover:text-white hover:border-red-500 transition-colors tracking-widest uppercase">Del</button>
-                    </div>
-                  </td>
+        <>
+          {/* Mobile card view */}
+          <div className="md:hidden space-y-3">
+            {orders.map(order => (
+              <div key={order._id} className="admin-card !p-3">
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    <p className="text-xs font-medium font-mono">#{order._id.slice(-8).toUpperCase()}</p>
+                    <p className="text-[10px] text-gray-400">{order.orderItems?.length} item(s) · {new Date(order.createdAt).toLocaleDateString()}</p>
+                  </div>
+                  <StatusBadge status={order.orderStatus} />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-medium">{order.user?.name || 'Unknown'}</p>
+                    <p className="text-xs font-semibold mt-0.5">${order.totalPrice?.toFixed(2)}
+                      <span className={`ml-2 text-[10px] ${order.isPaid ? 'text-green-600' : 'text-gray-400'}`}>
+                        {order.isPaid ? '✓ Paid' : 'Unpaid'}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Link to={`/admin/orders/${order._id}`} className="text-[10px] border border-gray-200 px-3 py-1 tracking-widest uppercase">View</Link>
+                    <button onClick={() => handleDelete(order._id)} className="text-[10px] border border-red-100 text-red-400 px-3 py-1 tracking-widest uppercase">Del</button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop table */}
+          <div className="admin-card overflow-x-auto hidden md:block">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-100 text-xs tracking-widest uppercase text-gray-400">
+                  <th className="text-left table-cell">Order</th>
+                  <th className="text-left table-cell">Customer</th>
+                  <th className="text-left table-cell hidden sm:table-cell">Date</th>
+                  <th className="text-left table-cell">Status</th>
+                  <th className="text-left table-cell">Total</th>
+                  <th className="text-left table-cell hidden md:table-cell">Paid</th>
+                  <th className="text-right table-cell">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          {orders.length === 0 && <div className="text-center py-16 text-gray-400">No orders found</div>}
-          <Pagination page={page} pages={pages} onPageChange={setCurrentPage} />
-        </div>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {orders.map(order => (
+                  <tr key={order._id} className="hover:bg-gray-50 transition-colors">
+                    <td className="table-cell">
+                      <Link to={`/admin/orders/${order._id}`} className="font-mono text-xs font-medium hover:text-accent">
+                        #{order._id.slice(-8).toUpperCase()}
+                      </Link>
+                      <p className="text-xs text-gray-400">{order.orderItems?.length} item(s)</p>
+                    </td>
+                    <td className="table-cell">
+                      <p className="font-medium">{order.user?.name || 'Unknown'}</p>
+                      <p className="text-xs text-gray-400">{order.user?.email}</p>
+                    </td>
+                    <td className="table-cell hidden sm:table-cell text-gray-500 text-xs">{new Date(order.createdAt).toLocaleDateString()}</td>
+                    <td className="table-cell"><StatusBadge status={order.orderStatus} /></td>
+                    <td className="table-cell font-semibold">${order.totalPrice?.toFixed(2)}</td>
+                    <td className="table-cell hidden md:table-cell">
+                      <span className={`text-xs font-medium ${order.isPaid ? 'text-green-600' : 'text-gray-400'}`}>
+                        {order.isPaid ? '✓ Paid' : 'Pending'}
+                      </span>
+                    </td>
+                    <td className="table-cell text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link to={`/admin/orders/${order._id}`} className="text-xs border border-gray-200 px-3 py-1.5 hover:border-black tracking-widest uppercase">View</Link>
+                        <button onClick={() => handleDelete(order._id)} className="text-xs border border-red-100 text-red-400 px-3 py-1.5 hover:bg-red-500 hover:text-white hover:border-red-500 tracking-widest uppercase">Del</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {orders.length === 0 && <div className="text-center py-16 text-gray-400">No orders found</div>}
+            <Pagination page={page} pages={pages} onPageChange={setCurrentPage} />
+          </div>
+
+          {orders.length === 0 && <div className="text-center py-16 text-gray-400 md:hidden">No orders found</div>}
+          <div className="md:hidden mt-4"><Pagination page={page} pages={pages} onPageChange={setCurrentPage} /></div>
+        </>
       )}
     </div>
   );
