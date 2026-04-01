@@ -20,8 +20,8 @@ export default function OrderDetailPage() {
   if (loading || !order) return <PageSpinner />;
 
   return (
-    <div className="pt-24 min-h-screen page-enter">
-      <div className="max-w-3xl mx-auto px-6 py-10">
+    <div className="min-h-screen page-enter" style={{ paddingTop: 96 }}>
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
         <Link to="/orders" className="flex items-center gap-2 text-xs tracking-widest uppercase text-gray-500 hover:text-black transition-colors mb-8">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
           Back to Orders

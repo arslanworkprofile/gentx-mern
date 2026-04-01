@@ -27,14 +27,14 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="pt-24 min-h-screen page-enter">
+    <div className="min-h-screen page-enter" style={{ paddingTop: 96 }}>
       <div className="bg-gray-50 border-b border-gray-100 py-10 px-6">
         <div className="max-w-2xl mx-auto">
           <p className="section-subtitle mb-2">Account</p>
           <h1 className="section-title">My Profile</h1>
         </div>
       </div>
-      <div className="max-w-2xl mx-auto px-6 py-10">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10">
         <form onSubmit={handle} className="space-y-6">
           <div className="bg-white border border-gray-100 p-8">
             <h2 className="text-xs tracking-widest uppercase font-medium mb-6">Personal Information</h2>

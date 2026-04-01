@@ -10,7 +10,7 @@ const Section = ({ title, children }) => (
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="pt-20 min-h-screen page-enter">
+    <div className="min-h-screen page-enter" style={{ paddingTop: 80 }}>
       {/* Header */}
       <div className="bg-gray-950 py-20 px-6 text-center">
         <p className="section-subtitle text-accent mb-3">Legal</p>
@@ -18,7 +18,7 @@ export default function PrivacyPolicyPage() {
         <p className="text-gray-400 text-sm mt-4">Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
       </div>
 
-      <div className="max-w-3xl mx-auto px-6 py-16">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
         <div className="bg-accent/10 border border-accent/20 p-5 mb-12 text-sm text-gray-700 leading-relaxed">
           At <strong>Gent X</strong>, your privacy is our priority. This policy explains how we collect, use, and protect your personal information when you use our website and services. By using Gent X, you agree to the terms described below.
         </div>

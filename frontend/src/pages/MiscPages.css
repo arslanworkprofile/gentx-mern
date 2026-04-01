@@ -1,0 +1,143 @@
+.success-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 16px;
+}
+.success-card {
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+  background: white;
+  border: 1px solid var(--gray-200);
+  padding: 56px 40px;
+  border-radius: 2px;
+  animation: fadeUp 0.4s ease;
+}
+.success-icon { color: var(--green); margin-bottom: 20px; }
+.success-card h1 {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 400;
+  margin-bottom: 12px;
+}
+.success-card p { color: var(--gray-400); font-size: 15px; margin-bottom: 8px; line-height: 1.6; }
+.success-details {
+  background: var(--gray-100);
+  border-radius: 2px;
+  padding: 20px;
+  margin: 24px 0;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.success-details p { font-size: 14px; color: var(--gray-600); }
+.success-details strong { color: var(--black); }
+.success-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 24px; }
+
+.misc-page { padding-bottom: 80px; }
+.misc-title {
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 400;
+  margin: 32px 0 32px;
+  letter-spacing: -0.5px;
+}
+.misc-title span { font-family: var(--font-body); font-size: 24px; color: var(--gray-400); font-weight: 400; }
+.misc-empty { text-align: center; padding: 80px 0; color: var(--gray-400); font-size: 15px; }
+
+/* Orders list */
+.orders-list { display: flex; flex-direction: column; gap: 12px; }
+.order-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border: 1px solid var(--gray-200);
+  padding: 20px 24px;
+  border-radius: 2px;
+  text-decoration: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.order-card:hover { border-color: var(--gold); box-shadow: var(--shadow-sm); }
+.order-card__id { font-size: 14px; font-weight: 700; color: var(--black); margin-bottom: 4px; }
+.order-card__date { font-size: 12px; color: var(--gray-400); }
+.order-card__items { font-size: 12px; color: var(--gray-400); }
+.order-card__right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.order-card__total { font-size: 16px; font-weight: 700; color: var(--black); }
+
+/* Order detail */
+.order-detail-layout { display: grid; grid-template-columns: 1fr 300px; gap: 32px; align-items: start; }
+.order-detail-section {
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: 2px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.order-detail-section h3 {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+.order-detail-section p { font-size: 13px; color: var(--gray-600); line-height: 1.7; }
+.order-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--gray-600);
+  margin-bottom: 12px;
+}
+.order-detail-item img { width: 48px; height: 60px; object-fit: cover; border-radius: 1px; }
+.order-detail-item div { flex: 1; }
+.order-detail-item div p { color: var(--black); font-weight: 500; margin-bottom: 3px; }
+.order-detail-item > p { font-weight: 600; color: var(--black); white-space: nowrap; }
+.order-detail-summary {
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: 2px;
+  padding: 24px;
+  position: sticky;
+  top: 100px;
+}
+.order-detail-summary h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 20px;
+}
+.order-detail-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--gray-600);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--gray-100);
+}
+.order-detail-row--total { font-size: 16px; font-weight: 700; color: var(--black); border-bottom: none; }
+
+/* Profile */
+.profile-layout { max-width: 560px; }
+.profile-card {
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: 2px;
+  padding: 32px;
+}
+.profile-card h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 400;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+  .order-detail-layout { grid-template-columns: 1fr; }
+  .order-detail-summary { position: static; }
+}

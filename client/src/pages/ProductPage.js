@@ -71,9 +71,9 @@ export default function ProductPage() {
   const savings = product.discountPrice > 0 ? ((1 - product.discountPrice / product.price) * 100).toFixed(0) : 0;
 
   return (
-    <div className="pt-20 page-enter">
+    <div className="page-enter" style={{ paddingTop: 80 }}>
       {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-6 py-5">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5">
         <nav className="flex items-center gap-2 text-xs text-gray-400">
           <Link to="/" className="hover:text-black transition-colors">Home</Link>
           <span>/</span>
@@ -85,7 +85,7 @@ export default function ProductPage() {
         </nav>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 pb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-12 sm:pb-20">
         <div className="grid md:grid-cols-2 gap-12 lg:gap-20">
 
           {/* ── Gallery ── */}

@@ -10,14 +10,14 @@ const Section = ({ title, children }) => (
 
 export default function TermsPage() {
   return (
-    <div className="pt-20 min-h-screen page-enter">
+    <div className="min-h-screen page-enter" style={{ paddingTop: 80 }}>
       <div className="bg-gray-950 py-20 px-6 text-center">
         <p className="section-subtitle text-accent mb-3">Legal</p>
         <h1 className="font-display text-4xl md:text-5xl font-semibold text-white">Terms of Service</h1>
         <p className="text-gray-400 text-sm mt-4">Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
       </div>
 
-      <div className="max-w-3xl mx-auto px-6 py-16">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
         <div className="bg-gray-50 border border-gray-200 p-5 mb-12 text-sm text-gray-600 leading-relaxed">
           Please read these Terms of Service carefully before using the Gent X website. By accessing or using our services, you agree to be bound by these terms. If you disagree with any part, please discontinue use of our website.
         </div>

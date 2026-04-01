@@ -34,7 +34,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="pt-20 min-h-screen page-enter">
+    <div className="min-h-screen page-enter" style={{ paddingTop: 80 }}>
       {/* Header */}
       <div className="bg-gray-950 py-20 px-6 text-center">
         <p className="section-subtitle text-accent mb-3">Get in Touch</p>
@@ -42,7 +42,7 @@ export default function ContactPage() {
         <p className="text-gray-400 text-sm mt-4 max-w-md mx-auto">We're here to help. Whether it's a question about sizing, an order query, or just a chat about style — reach out.</p>
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 py-16">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16">
         <div className="grid md:grid-cols-2 gap-12">
 
           {/* Left — contact info */}

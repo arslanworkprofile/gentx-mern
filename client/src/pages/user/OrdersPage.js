@@ -11,14 +11,14 @@ export function OrdersPage() {
   useEffect(() => { dispatch(fetchMyOrders()); }, [dispatch]);
 
   return (
-    <div className="pt-24 min-h-screen page-enter">
+    <div className="min-h-screen page-enter" style={{ paddingTop: 96 }}>
       <div className="bg-gray-50 border-b border-gray-100 py-10 px-6">
         <div className="max-w-4xl mx-auto">
           <p className="section-subtitle mb-2">Account</p>
           <h1 className="section-title">My Orders</h1>
         </div>
       </div>
-      <div className="max-w-4xl mx-auto px-6 py-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
         {loading ? <PageSpinner /> : myOrders.length === 0 ? (
           <EmptyState icon="📦" title="No orders yet" description="Your orders will appear here after you make a purchase."
             action={<Link to="/shop" className="btn-primary inline-block">Start Shopping</Link>} />

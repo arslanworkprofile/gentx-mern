@@ -29,7 +29,7 @@ const EligibilityRow = ({ item, eligible }) => (
 
 export default function ReturnPolicyPage() {
   return (
-    <div className="pt-20 min-h-screen page-enter">
+    <div className="min-h-screen page-enter" style={{ paddingTop: 80 }}>
       {/* Header */}
       <div className="bg-gray-950 py-20 px-6 text-center">
         <p className="section-subtitle text-accent mb-3">Customer Care</p>
@@ -45,7 +45,7 @@ export default function ReturnPolicyPage() {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-6 py-16">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
 
         {/* Quick stats */}
         <div className="grid grid-cols-3 gap-4 mb-14">

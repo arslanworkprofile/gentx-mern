@@ -19,14 +19,14 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="pt-24 min-h-screen page-enter">
+    <div className="min-h-screen page-enter" style={{ paddingTop: 96 }}>
       <div className="bg-gray-50 border-b border-gray-100 py-10 px-6">
         <div className="max-w-5xl mx-auto">
           <p className="section-subtitle mb-2">My Account</p>
           <h1 className="section-title">Welcome, {user?.name?.split(' ')[0]}</h1>
         </div>
       </div>
-      <div className="max-w-5xl mx-auto px-6 py-10">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
           {stats.map(s => (

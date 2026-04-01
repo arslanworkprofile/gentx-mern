@@ -10,7 +10,7 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="pt-20 min-h-screen page-enter">
+    <div className="min-h-screen page-enter" style={{ paddingTop: 80 }}>
       {/* Hero */}
       <div className="relative h-[60vh] min-h-[400px] flex items-center overflow-hidden">
         <img src="https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?w=1400&h=600&fit=crop" alt="Gent X Story" className="absolute inset-0 w-full h-full object-cover" />
