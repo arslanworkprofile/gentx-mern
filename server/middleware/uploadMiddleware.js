@@ -1,49 +1,20 @@
 const multer = require('multer');
-const path   = require('path');
-const fs     = require('fs');
-const cloudinary = require('cloudinary').v2;
-const streamifier = require('streamifier');
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key:    process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-const useCloudinary = process.env.USE_CLOUDINARY === 'true';
-
-const diskStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = path.join(__dirname, '../uploads');
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    cb(null, dir);
-  },
-  filename: (req, file, cb) =>
-    cb(null, `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`),
-});
-
-const fileFilter = (req, file, cb) => {
-  /\.(jpe?g|png|gif|webp)$/i.test(file.originalname)
-    ? cb(null, true)
-    : cb(new Error('Images only (jpg, png, gif, webp)'), false);
-};
-
+// Always use memory storage — we store images as base64 in MongoDB
 const upload = multer({
-  storage: useCloudinary ? multer.memoryStorage() : diskStorage,
-  fileFilter,
+  storage: multer.memoryStorage(),
+  fileFilter: (req, file, cb) => {
+    /\.(jpe?g|png|gif|webp)$/i.test(file.originalname)
+      ? cb(null, true)
+      : cb(new Error('Images only (jpg, png, gif, webp)'), false);
+  },
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
 });
 
-const uploadToCloudinary = (buffer, folder = 'gentx') =>
-  new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { folder, resource_type: 'image' },
-      (err, result) => err ? reject(err) : resolve({ url: result.secure_url, public_id: result.public_id })
-    );
-    streamifier.createReadStream(buffer).pipe(stream);
-  });
+// Convert buffer to base64 data URL — stored directly in MongoDB
+const bufferToBase64 = (buffer, mimetype) => {
+  const base64 = buffer.toString('base64');
+  return `data:${mimetype};base64,${base64}`;
+};
 
-const deleteFromCloudinary = (public_id) =>
-  public_id ? cloudinary.uploader.destroy(public_id) : Promise.resolve();
-
-module.exports = { upload, uploadToCloudinary, deleteFromCloudinary, useCloudinary };
+module.exports = { upload, bufferToBase64 };

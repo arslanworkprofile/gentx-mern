@@ -1,6 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Product = require('../models/Product');
-const { uploadToCloudinary, deleteFromCloudinary, useCloudinary } = require('../middleware/uploadMiddleware');
+const { upload, bufferToBase64 } = require('../middleware/uploadMiddleware');
 
 const parseJSON = (val, fallback = []) => { try { return JSON.parse(val); } catch { return fallback; } };
 
@@ -87,8 +87,7 @@ exports.updateProduct = asyncHandler(async (req, res) => {
   if (req.body.tags)     product.tags     = parseJSON(req.body.tags);
   if (req.body.removeImages) {
     for (const pid of parseJSON(req.body.removeImages)) {
-      if (useCloudinary) await deleteFromCloudinary(pid);
-      product.images = product.images.filter(i => i.public_id !== pid);
+      if (useCloudinary) product.images = product.images.filter(i => i.public_id !== pid);
     }
   }
   if (req.files?.length) {
@@ -106,8 +105,7 @@ exports.updateProduct = asyncHandler(async (req, res) => {
 exports.deleteProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
   if (!product) { res.status(404); throw new Error('Product not found'); }
-  if (useCloudinary) for (const img of product.images) await deleteFromCloudinary(img.public_id);
-  await product.deleteOne();
+  if (useCloudinary) for (const img of product.images) await product.deleteOne();
   res.json({ success: true, message: 'Product deleted' });
 });
 

@@ -1,7 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const { v4: uuidv4 } = require('uuid');
 const SiteSettings = require('../models/SiteSettings');
-const { uploadToCloudinary, deleteFromCloudinary, useCloudinary } = require('../middleware/uploadMiddleware');
+const { bufferToBase64 } = require('../middleware/uploadMiddleware');
 
 // Helper: get or create the singleton settings doc
 const getSettings = async () => {
@@ -14,7 +14,7 @@ const getSettings = async () => {
           id: uuidv4(),
           imageUrl: 'https://images.unsplash.com/photo-1490551902236-7231eb14e87c?w=1600&h=1000&fit=crop&q=80',
           heading: 'Dress With Intent.',
-          subheading: 'Premium menswear for those who understand that style is not what you wear — it\'s how you carry it.',
+          subheading: "Premium menswear for those who understand that style is not what you wear — it's how you carry it.",
           badge: 'New Collection — 2024',
           ctaLabel: 'Shop Collection',
           ctaLink: '/shop',
@@ -61,27 +61,20 @@ exports.updateGeneral = asyncHandler(async (req, res) => {
 
 // ── HERO SLIDES ──────────────────────────────────────────────────────────────
 
-// POST /api/settings/hero  — add a hero slide
 exports.addHeroSlide = asyncHandler(async (req, res) => {
   const settings = await getSettings();
   let imageUrl = req.body.imageUrl || '';
-  let publicId = '';
 
   if (req.file) {
-    if (useCloudinary) {
-      const result = await uploadToCloudinary(req.file.buffer, 'gentx/hero');
-      imageUrl = result.url; publicId = result.public_id;
-    } else {
-      imageUrl = `/uploads/${req.file.filename}`;
-      publicId = req.file.filename;
-    }
+    imageUrl = bufferToBase64(req.file.buffer, req.file.mimetype);
   }
 
   if (!imageUrl) { res.status(400); throw new Error('Image is required for a hero slide'); }
 
   const slide = {
     id:         uuidv4(),
-    imageUrl,   publicId,
+    imageUrl,
+    publicId:   '',
     heading:    req.body.heading    || 'Dress With Intent.',
     subheading: req.body.subheading || '',
     badge:      req.body.badge      || '',
@@ -98,7 +91,6 @@ exports.addHeroSlide = asyncHandler(async (req, res) => {
   res.status(201).json({ success: true, settings });
 });
 
-// PUT /api/settings/hero/:slideId  — update a slide
 exports.updateHeroSlide = asyncHandler(async (req, res) => {
   const settings = await getSettings();
   const slide = settings.heroSlides.find(s => s.id === req.params.slideId);
@@ -107,16 +99,8 @@ exports.updateHeroSlide = asyncHandler(async (req, res) => {
   const fields = ['heading','subheading','badge','ctaLabel','ctaLink','ctaLabel2','ctaLink2','active','order'];
   fields.forEach(f => { if (req.body[f] !== undefined) slide[f] = req.body[f]; });
 
-  // Replace image if a new file was uploaded
   if (req.file) {
-    if (useCloudinary) {
-      if (slide.publicId) await deleteFromCloudinary(slide.publicId);
-      const result = await uploadToCloudinary(req.file.buffer, 'gentx/hero');
-      slide.imageUrl = result.url; slide.publicId = result.public_id;
-    } else {
-      slide.imageUrl = `/uploads/${req.file.filename}`;
-      slide.publicId = req.file.filename;
-    }
+    slide.imageUrl = bufferToBase64(req.file.buffer, req.file.mimetype);
   } else if (req.body.imageUrl) {
     slide.imageUrl = req.body.imageUrl;
   }
@@ -125,11 +109,8 @@ exports.updateHeroSlide = asyncHandler(async (req, res) => {
   res.json({ success: true, settings });
 });
 
-// DELETE /api/settings/hero/:slideId  — remove a slide
 exports.deleteHeroSlide = asyncHandler(async (req, res) => {
   const settings = await getSettings();
-  const slide = settings.heroSlides.find(s => s.id === req.params.slideId);
-  if (slide?.publicId && useCloudinary) await deleteFromCloudinary(slide.publicId);
   settings.heroSlides = settings.heroSlides.filter(s => s.id !== req.params.slideId);
   await settings.save();
   res.json({ success: true, settings });
@@ -137,39 +118,30 @@ exports.deleteHeroSlide = asyncHandler(async (req, res) => {
 
 // ── CATEGORIES ───────────────────────────────────────────────────────────────
 
-// POST /api/settings/categories  — add a category
 exports.addCategory = asyncHandler(async (req, res) => {
   const settings = await getSettings();
   const { label, value } = req.body;
   if (!label || !value) { res.status(400); throw new Error('Label and value are required'); }
 
-  // Prevent duplicate slugs
   if (settings.categories.find(c => c.value === value.toLowerCase().trim())) {
     res.status(400); throw new Error(`Category "${value}" already exists`);
   }
 
   let imageUrl = req.body.imageUrl || '';
-  let publicId = '';
   if (req.file) {
-    if (useCloudinary) {
-      const result = await uploadToCloudinary(req.file.buffer, 'gentx/categories');
-      imageUrl = result.url; publicId = result.public_id;
-    } else {
-      imageUrl = `/uploads/${req.file.filename}`; publicId = req.file.filename;
-    }
+    imageUrl = bufferToBase64(req.file.buffer, req.file.mimetype);
   }
 
   settings.categories.push({
     id: uuidv4(), label: label.trim(),
     value: value.toLowerCase().trim(),
-    imageUrl, publicId, active: true,
+    imageUrl, publicId: '', active: true,
     order: settings.categories.length,
   });
   await settings.save();
   res.status(201).json({ success: true, settings });
 });
 
-// PUT /api/settings/categories/:catId  — update a category
 exports.updateCategory = asyncHandler(async (req, res) => {
   const settings = await getSettings();
   const cat = settings.categories.find(c => c.id === req.params.catId);
@@ -181,13 +153,7 @@ exports.updateCategory = asyncHandler(async (req, res) => {
   if (req.body.order  !== undefined) cat.order  = Number(req.body.order);
 
   if (req.file) {
-    if (useCloudinary) {
-      if (cat.publicId) await deleteFromCloudinary(cat.publicId);
-      const result = await uploadToCloudinary(req.file.buffer, 'gentx/categories');
-      cat.imageUrl = result.url; cat.publicId = result.public_id;
-    } else {
-      cat.imageUrl = `/uploads/${req.file.filename}`; cat.publicId = req.file.filename;
-    }
+    cat.imageUrl = bufferToBase64(req.file.buffer, req.file.mimetype);
   } else if (req.body.imageUrl) {
     cat.imageUrl = req.body.imageUrl;
   }
@@ -196,11 +162,8 @@ exports.updateCategory = asyncHandler(async (req, res) => {
   res.json({ success: true, settings });
 });
 
-// DELETE /api/settings/categories/:catId  — remove a category
 exports.deleteCategory = asyncHandler(async (req, res) => {
   const settings = await getSettings();
-  const cat = settings.categories.find(c => c.id === req.params.catId);
-  if (cat?.publicId && useCloudinary) await deleteFromCloudinary(cat.publicId);
   settings.categories = settings.categories.filter(c => c.id !== req.params.catId);
   await settings.save();
   res.json({ success: true, settings });
