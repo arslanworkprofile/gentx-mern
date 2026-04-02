@@ -54,14 +54,16 @@ exports.getProductById = asyncHandler(async (req, res) => {
 exports.createProduct = asyncHandler(async (req, res) => {
   const { name, description, price, discountPrice, category, brand, colors, sizes, variants, stock, featured, isNewArrival, tags } = req.body;
   if (!name || !description || !price || !category) { res.status(400); throw new Error('Name, description, price, category required'); }
+
+  // Store images as base64 in MongoDB
   let images = [];
   if (req.files?.length) {
-    if (useCloudinary) {
-      for (const f of req.files) images.push(await uploadToCloudinary(f.buffer, 'gentx/products'));
-    } else {
-      images = req.files.map(f => ({ url: `/uploads/${f.filename}`, public_id: f.filename }));
-    }
+    images = req.files.map(f => ({
+      url: bufferToBase64(f.buffer, f.mimetype),
+      public_id: `${Date.now()}-${f.originalname}`,
+    }));
   }
+
   const product = await Product.create({
     name, description, price: +price, discountPrice: discountPrice ? +discountPrice : 0,
     category, brand: brand || 'Gent X', images,
@@ -77,6 +79,7 @@ exports.createProduct = asyncHandler(async (req, res) => {
 exports.updateProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
   if (!product) { res.status(404); throw new Error('Product not found'); }
+
   const fields = ['name','description','category','brand','stock','featured','isNewArrival'];
   fields.forEach(f => { if (req.body[f] !== undefined) product[f] = req.body[f]; });
   if (req.body.price)         product.price         = +req.body.price;
@@ -85,18 +88,21 @@ exports.updateProduct = asyncHandler(async (req, res) => {
   if (req.body.sizes)    product.sizes    = parseJSON(req.body.sizes);
   if (req.body.variants) product.variants = parseJSON(req.body.variants);
   if (req.body.tags)     product.tags     = parseJSON(req.body.tags);
+
+  // Remove images by public_id
   if (req.body.removeImages) {
-    for (const pid of parseJSON(req.body.removeImages)) {
-      if (useCloudinary) product.images = product.images.filter(i => i.public_id !== pid);
-    }
+    const toRemove = parseJSON(req.body.removeImages);
+    product.images = product.images.filter(i => !toRemove.includes(i.public_id));
   }
+
+  // Add new images as base64
   if (req.files?.length) {
-    if (useCloudinary) {
-      for (const f of req.files) product.images.push(await uploadToCloudinary(f.buffer, 'gentx/products'));
-    } else {
-      req.files.forEach(f => product.images.push({ url: `/uploads/${f.filename}`, public_id: f.filename }));
-    }
+    req.files.forEach(f => product.images.push({
+      url: bufferToBase64(f.buffer, f.mimetype),
+      public_id: `${Date.now()}-${f.originalname}`,
+    }));
   }
+
   const updated = await product.save();
   res.json({ success: true, product: updated });
 });
@@ -105,7 +111,7 @@ exports.updateProduct = asyncHandler(async (req, res) => {
 exports.deleteProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
   if (!product) { res.status(404); throw new Error('Product not found'); }
-  if (useCloudinary) for (const img of product.images) await product.deleteOne();
+  await product.deleteOne();
   res.json({ success: true, message: 'Product deleted' });
 });
 
