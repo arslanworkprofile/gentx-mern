@@ -190,7 +190,7 @@ export default function AdminLayout() {
       <div
         className={`
           flex-1 min-w-0 transition-all duration-300
-          md:${collapsed ? 'ml-16' : 'ml-60'}
+          ${collapsed ? 'md:ml-16' : 'md:ml-60'}
         `}
       >
         {/* Header */}
