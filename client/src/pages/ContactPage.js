@@ -6,6 +6,9 @@ const PHONE   = '+923348544492';
 const PHONE_DISPLAY = '+92 334 854 4492';
 const EMAIL   = 'arslan.workprofile@gmail.com';
 const WHATSAPP_URL = `https://wa.me/${PHONE}`;
+const EMAILJS_SERVICE_ID  = 'service_9kaowvm';
+const EMAILJS_TEMPLATE_ID = 'template_uk15xdg';
+const EMAILJS_PUBLIC_KEY  = 'Dsb803w43USzAaTNr';
 
 const InfoCard = ({ icon, title, value, href, sub }) => (
   <a href={href} target={href?.startsWith('http') ? '_blank' : undefined} rel="noreferrer"
