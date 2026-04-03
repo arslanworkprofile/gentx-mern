@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import API from '../utils/api';
 
 // ── Size Guide Modal ──────────────────────────────────────────────────────────
+// On mobile: slides up as a bottom sheet. On desktop: centered modal.
 function SizeGuideModal({ onClose }) {
   useEffect(() => {
     const handler = (e) => { if (e.key === 'Escape') onClose(); };
@@ -17,29 +18,32 @@ function SizeGuideModal({ onClose }) {
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      {/* Sheet / Modal */}
+      <div className="relative bg-white w-full sm:w-auto sm:min-w-[480px] sm:max-w-lg max-h-[88vh] sm:max-h-[85vh] flex flex-col rounded-t-2xl sm:rounded-none overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-gray-100 flex-shrink-0">
           <h2 className="font-display text-lg font-semibold">Size Guide</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-black transition-colors">
+          <button onClick={onClose} className="text-gray-400 hover:text-black transition-colors p-1 -mr-1">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
+        {/* Scrollable body */}
+        <div className="overflow-y-auto flex-1 px-4 sm:px-6 py-5 space-y-6">
           {/* Tops */}
           <div>
             <h3 className="text-xs tracking-widest uppercase font-medium mb-3">Tops / Shirts / Hoodies</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs text-center border-collapse">
+            <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+              <table className="min-w-full text-xs text-center border-collapse">
                 <thead>
                   <tr className="bg-gray-50">
                     {['Size','Chest (in)','Shoulder (in)','Length (in)'].map(h => (
-                      <th key={h} className="border border-gray-200 px-3 py-2 font-medium text-gray-600">{h}</th>
+                      <th key={h} className="border border-gray-200 px-3 py-2 font-medium text-gray-600 whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -65,12 +69,12 @@ function SizeGuideModal({ onClose }) {
           {/* Bottoms */}
           <div>
             <h3 className="text-xs tracking-widest uppercase font-medium mb-3">Bottoms / Pants</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs text-center border-collapse">
+            <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+              <table className="min-w-full text-xs text-center border-collapse">
                 <thead>
                   <tr className="bg-gray-50">
                     {['Waist (in)','Hip (in)','Inseam (in)'].map(h => (
-                      <th key={h} className="border border-gray-200 px-3 py-2 font-medium text-gray-600">{h}</th>
+                      <th key={h} className="border border-gray-200 px-3 py-2 font-medium text-gray-600 whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
                 </thead>

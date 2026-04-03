@@ -228,7 +228,7 @@ export default function ShopPage() {
       {filtersOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setFiltersOpen(false)} />
-          <div className="absolute right-0 top-0 bottom-0 w-[85vw] max-w-sm bg-white flex flex-col animate-slide-in">
+          <div className="absolute right-0 top-0 bottom-0 w-[85vw] max-w-[340px] bg-white flex flex-col animate-slide-in overflow-x-hidden">
             <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
               <h3 className="text-sm font-semibold tracking-widest uppercase">Filters</h3>
               <button onClick={() => setFiltersOpen(false)} className="p-1 text-gray-400 hover:text-black">

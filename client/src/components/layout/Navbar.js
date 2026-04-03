@@ -220,7 +220,7 @@ export default function Navbar() {
             onClick={() => setMenuOpen(false)}
           />
           {/* Panel */}
-          <div className="absolute top-0 right-0 bottom-0 w-[80vw] max-w-xs bg-white flex flex-col animate-slide-in overflow-y-auto">
+          <div className="absolute top-0 right-0 bottom-0 w-[80vw] max-w-[320px] bg-white flex flex-col animate-slide-in overflow-y-auto overflow-x-hidden">
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
               <span className="font-display text-xl font-semibold">
