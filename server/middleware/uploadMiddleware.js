@@ -1,4 +1,5 @@
 const multer = require('multer');
+const sharp = require('sharp');
 
 // Always use memory storage — we store images as base64 in MongoDB
 const upload = multer({
@@ -11,10 +12,21 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
 });
 
-// Convert buffer to base64 data URL — stored directly in MongoDB
-const bufferToBase64 = (buffer, mimetype) => {
-  const base64 = buffer.toString('base64');
-  return `data:${mimetype};base64,${base64}`;
+// Compress + resize image, then convert to base64 data URL
+// Keeps images well under MongoDB's 16MB document limit
+const bufferToBase64 = async (buffer, mimetype) => {
+  try {
+    const compressed = await sharp(buffer)
+      .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 75 })
+      .toBuffer();
+    const base64 = compressed.toString('base64');
+    return `data:image/jpeg;base64,${base64}`;
+  } catch {
+    // Fallback: encode as-is if sharp fails
+    const base64 = buffer.toString('base64');
+    return `data:${mimetype};base64,${base64}`;
+  }
 };
 
 module.exports = { upload, bufferToBase64 };

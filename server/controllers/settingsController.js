@@ -66,7 +66,7 @@ exports.addHeroSlide = asyncHandler(async (req, res) => {
   let imageUrl = req.body.imageUrl || '';
 
   if (req.file) {
-    imageUrl = bufferToBase64(req.file.buffer, req.file.mimetype);
+    imageUrl = await bufferToBase64(req.file.buffer, req.file.mimetype);
   }
 
   if (!imageUrl) { res.status(400); throw new Error('Image is required for a hero slide'); }
@@ -100,7 +100,7 @@ exports.updateHeroSlide = asyncHandler(async (req, res) => {
   fields.forEach(f => { if (req.body[f] !== undefined) slide[f] = req.body[f]; });
 
   if (req.file) {
-    slide.imageUrl = bufferToBase64(req.file.buffer, req.file.mimetype);
+    slide.imageUrl = await bufferToBase64(req.file.buffer, req.file.mimetype);
   } else if (req.body.imageUrl) {
     slide.imageUrl = req.body.imageUrl;
   }
@@ -129,7 +129,7 @@ exports.addCategory = asyncHandler(async (req, res) => {
 
   let imageUrl = req.body.imageUrl || '';
   if (req.file) {
-    imageUrl = bufferToBase64(req.file.buffer, req.file.mimetype);
+    imageUrl = await bufferToBase64(req.file.buffer, req.file.mimetype);
   }
 
   settings.categories.push({
@@ -153,7 +153,7 @@ exports.updateCategory = asyncHandler(async (req, res) => {
   if (req.body.order  !== undefined) cat.order  = Number(req.body.order);
 
   if (req.file) {
-    cat.imageUrl = bufferToBase64(req.file.buffer, req.file.mimetype);
+    cat.imageUrl = await bufferToBase64(req.file.buffer, req.file.mimetype);
   } else if (req.body.imageUrl) {
     cat.imageUrl = req.body.imageUrl;
   }

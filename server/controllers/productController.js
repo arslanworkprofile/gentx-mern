@@ -55,13 +55,13 @@ exports.createProduct = asyncHandler(async (req, res) => {
   const { name, description, price, discountPrice, category, brand, colors, sizes, variants, stock, featured, isNewArrival, tags } = req.body;
   if (!name || !description || !price || !category) { res.status(400); throw new Error('Name, description, price, category required'); }
 
-  // Store images as base64 in MongoDB
+  // Store images as base64 in MongoDB (compressed via sharp)
   let images = [];
   if (req.files?.length) {
-    images = req.files.map(f => ({
-      url: bufferToBase64(f.buffer, f.mimetype),
+    images = await Promise.all(req.files.map(async f => ({
+      url: await bufferToBase64(f.buffer, f.mimetype),
       public_id: `${Date.now()}-${f.originalname}`,
-    }));
+    })));
   }
 
   const product = await Product.create({
@@ -95,12 +95,14 @@ exports.updateProduct = asyncHandler(async (req, res) => {
     product.images = product.images.filter(i => !toRemove.includes(i.public_id));
   }
 
-  // Add new images as base64
+  // Add new images as base64 (compressed)
   if (req.files?.length) {
-    req.files.forEach(f => product.images.push({
-      url: bufferToBase64(f.buffer, f.mimetype),
-      public_id: `${Date.now()}-${f.originalname}`,
-    }));
+    for (const f of req.files) {
+      product.images.push({
+        url: await bufferToBase64(f.buffer, f.mimetype),
+        public_id: `${Date.now()}-${f.originalname}`,
+      });
+    }
   }
 
   const updated = await product.save();
