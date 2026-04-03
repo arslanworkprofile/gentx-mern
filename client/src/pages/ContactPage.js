@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 // EMAILJS SETUP — replace these 3 values with yours from emailjs.com
 // Sign up free at https://emailjs.com → Email Services → Add Service
 // Then create a template and copy your IDs here
-const EMAILJS_SERVICE_ID  = 'service_9kaowvm';   // e.g. 'service_abc123'
+const EMAILJS_SERVICE_ID = 'service_stob3h5';
 const EMAILJS_TEMPLATE_ID = 'template_uk15xdg';  // e.g. 'template_xyz789'
 const EMAILJS_PUBLIC_KEY  = 'Dsb803w43USzAaTNr';   // e.g. 'abcDEFghiJKL'
 // ─────────────────────────────────────────────────────────────
