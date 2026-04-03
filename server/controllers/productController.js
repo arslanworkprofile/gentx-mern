@@ -55,12 +55,14 @@ exports.createProduct = asyncHandler(async (req, res) => {
   const { name, description, price, discountPrice, category, brand, colors, sizes, variants, stock, featured, isNewArrival, tags } = req.body;
   if (!name || !description || !price || !category) { res.status(400); throw new Error('Name, description, price, category required'); }
 
-  // Store images as base64 in MongoDB (compressed via sharp)
+  // imageColors: JSON array matching each file e.g. ["White","Black","White"]
+  const imageColors = parseJSON(req.body.imageColors, []);
   let images = [];
   if (req.files?.length) {
-    images = await Promise.all(req.files.map(async f => ({
+    images = await Promise.all(req.files.map(async (f, i) => ({
       url: await bufferToBase64(f.buffer, f.mimetype),
-      public_id: `${Date.now()}-${f.originalname}`,
+      public_id: `${Date.now()}-${i}-${f.originalname}`,
+      color: imageColors[i] || '',
     })));
   }
 
@@ -95,12 +97,15 @@ exports.updateProduct = asyncHandler(async (req, res) => {
     product.images = product.images.filter(i => !toRemove.includes(i.public_id));
   }
 
-  // Add new images as base64 (compressed)
+  // Add new images with optional color tags
+  const imageColors = parseJSON(req.body.imageColors, []);
   if (req.files?.length) {
-    for (const f of req.files) {
+    for (let i = 0; i < req.files.length; i++) {
+      const f = req.files[i];
       product.images.push({
         url: await bufferToBase64(f.buffer, f.mimetype),
-        public_id: `${Date.now()}-${f.originalname}`,
+        public_id: `${Date.now()}-${i}-${f.originalname}`,
+        color: imageColors[i] || '',
       });
     }
   }

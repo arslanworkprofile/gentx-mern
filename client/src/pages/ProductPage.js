@@ -7,17 +7,121 @@ import { PageSpinner, StarRating } from '../components/common/UI';
 import toast from 'react-hot-toast';
 import API from '../utils/api';
 
+// ── Size Guide Modal ──────────────────────────────────────────────────────────
+function SizeGuideModal({ onClose }) {
+  useEffect(() => {
+    const handler = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', handler);
+    document.body.style.overflow = 'hidden';
+    return () => { window.removeEventListener('keydown', handler); document.body.style.overflow = ''; };
+  }, [onClose]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="relative bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white">
+          <h2 className="font-display text-lg font-semibold">Size Guide</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-black transition-colors">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="p-6 space-y-6">
+          {/* Tops */}
+          <div>
+            <h3 className="text-xs tracking-widest uppercase font-medium mb-3">Tops / Shirts / Hoodies</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-center border-collapse">
+                <thead>
+                  <tr className="bg-gray-50">
+                    {['Size','Chest (in)','Shoulder (in)','Length (in)'].map(h => (
+                      <th key={h} className="border border-gray-200 px-3 py-2 font-medium text-gray-600">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    ['XS', '34–36', '16.5', '27'],
+                    ['S',  '36–38', '17',   '28'],
+                    ['M',  '38–40', '17.5', '29'],
+                    ['L',  '40–42', '18',   '30'],
+                    ['XL', '42–44', '18.5', '31'],
+                    ['XXL','44–46', '19',   '32'],
+                  ].map(([size, ...vals]) => (
+                    <tr key={size} className="hover:bg-gray-50">
+                      <td className="border border-gray-200 px-3 py-2 font-semibold">{size}</td>
+                      {vals.map((v, i) => <td key={i} className="border border-gray-200 px-3 py-2 text-gray-600">{v}</td>)}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Bottoms */}
+          <div>
+            <h3 className="text-xs tracking-widest uppercase font-medium mb-3">Bottoms / Pants</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-center border-collapse">
+                <thead>
+                  <tr className="bg-gray-50">
+                    {['Waist (in)','Hip (in)','Inseam (in)'].map(h => (
+                      <th key={h} className="border border-gray-200 px-3 py-2 font-medium text-gray-600">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    ['28', '36', '30'],
+                    ['30', '38', '30'],
+                    ['32', '40', '31'],
+                    ['34', '42', '31'],
+                    ['36', '44', '32'],
+                    ['38', '46', '32'],
+                    ['40', '48', '33'],
+                  ].map(([waist, hip, inseam]) => (
+                    <tr key={waist} className="hover:bg-gray-50">
+                      <td className="border border-gray-200 px-3 py-2 font-semibold">{waist}"</td>
+                      <td className="border border-gray-200 px-3 py-2 text-gray-600">{hip}"</td>
+                      <td className="border border-gray-200 px-3 py-2 text-gray-600">{inseam}"</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Tips */}
+          <div className="bg-gray-50 p-4 text-xs text-gray-600 space-y-1">
+            <p className="font-medium text-black mb-2">How to Measure</p>
+            <p><span className="font-medium">Chest:</span> Measure around the fullest part of your chest, keeping the tape horizontal.</p>
+            <p><span className="font-medium">Waist:</span> Measure around your natural waistline, above the hip bone.</p>
+            <p><span className="font-medium">Inseam:</span> Measure from the crotch to the bottom of the ankle.</p>
+            <p className="pt-1 text-gray-400">If between sizes, we recommend sizing up for a relaxed fit.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Main Product Page ─────────────────────────────────────────────────────────
 export default function ProductPage() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const { product, loading } = useSelector(s => s.product);
   const { user } = useSelector(s => s.auth);
 
-  const [selectedImg, setSelectedImg] = useState(0);
+  const [selectedImg, setSelectedImg]     = useState(0);
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSize, setSelectedSize]   = useState('');
-  const [qty, setQty]   = useState(1);
-  const [tab, setTab]   = useState('description');
+  const [qty, setQty]       = useState(1);
+  const [tab, setTab]       = useState('description');
+  const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [review, setReview] = useState({ rating: 5, comment: '' });
   const [submitting, setSubmitting] = useState(false);
 
@@ -30,15 +134,25 @@ export default function ProductPage() {
     if (product) {
       setSelectedColor(product.colors?.[0] || '');
       setSelectedSize(product.sizes?.[0] || '');
+      setSelectedImg(0);
     }
   }, [product]);
+
+  // Filter images for the selected color
+  // If an image has no color set (color === ''), it shows for ALL colors
+  const visibleImages = product?.images?.filter(img =>
+    !img.color || !selectedColor || img.color === selectedColor
+  ) || [];
+
+  // When color changes, reset selected image to first visible
+  useEffect(() => { setSelectedImg(0); }, [selectedColor]);
 
   const handleAddToCart = () => {
     if (product.sizes?.length && !selectedSize) return toast.error('Please select a size');
     if (product.stock === 0) return toast.error('Out of stock');
     dispatch(addToCart({
       product: product._id, name: product.name,
-      image: product.images?.[0]?.url || '',
+      image: visibleImages[0]?.url || product.images?.[0]?.url || '',
       price: product.discountPrice > 0 ? product.discountPrice : product.price,
       color: selectedColor, size: selectedSize, quantity: qty,
     }));
@@ -69,9 +183,12 @@ export default function ProductPage() {
 
   const displayPrice = product.discountPrice > 0 ? product.discountPrice : product.price;
   const savings = product.discountPrice > 0 ? ((1 - product.discountPrice / product.price) * 100).toFixed(0) : 0;
+  const mainImage = visibleImages[selectedImg]?.url || visibleImages[0]?.url || 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=600';
 
   return (
     <div className="page-enter" style={{ paddingTop: 80 }}>
+      {showSizeGuide && <SizeGuideModal onClose={() => setShowSizeGuide(false)} />}
+
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5">
         <nav className="flex items-center gap-2 text-xs text-gray-400">
@@ -92,16 +209,16 @@ export default function ProductPage() {
           <div className="space-y-3">
             <div className="relative overflow-hidden aspect-[3/4] bg-gray-100">
               <img
-                src={product.images?.[selectedImg]?.url || 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=600'}
+                src={mainImage}
                 alt={product.name}
                 className="w-full h-full object-cover transition-all duration-500"
               />
               {product.isNew && <span className="absolute top-4 left-4 badge-new">New Arrival</span>}
               {savings > 0 && <span className="absolute top-4 right-4 badge-sale">−{savings}%</span>}
             </div>
-            {product.images?.length > 1 && (
+            {visibleImages.length > 1 && (
               <div className="flex gap-2 overflow-x-auto pb-1">
-                {product.images.map((img, i) => (
+                {visibleImages.map((img, i) => (
                   <button key={i} onClick={() => setSelectedImg(i)}
                     className={`flex-shrink-0 w-20 h-24 overflow-hidden border-2 transition-all ${i === selectedImg ? 'border-black' : 'border-transparent opacity-60 hover:opacity-100'}`}>
                     <img src={img.url} alt="" className="w-full h-full object-cover" />
@@ -146,7 +263,12 @@ export default function ProductPage() {
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-2">
                   <p className="label-field">Size</p>
-                  <button className="text-xs text-gray-500 underline hover:text-black">Size Guide</button>
+                  <button
+                    onClick={() => setShowSizeGuide(true)}
+                    className="text-xs text-gray-500 underline hover:text-black transition-colors"
+                  >
+                    Size Guide
+                  </button>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {product.sizes.map(s => (
@@ -240,7 +362,6 @@ export default function ProductPage() {
                     <p className="text-sm text-gray-600 leading-relaxed">{r.comment}</p>
                   </div>
                 ))}
-
                 {user && (
                   <div className="pt-4">
                     <h4 className="font-display text-lg font-semibold mb-4">Write a Review</h4>

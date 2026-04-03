@@ -17,7 +17,8 @@ const productSchema = new mongoose.Schema({
     enum: ['shirts', 'pants', 'jackets', 'shoes', 'accessories', 'hoodies', 'suits', 'casual', 'formal', 'other'],
   },
   brand:       { type: String, default: 'Gent X' },
-  images:      [{ url: String, public_id: String }],
+  // color: optional — links this image to a specific color variant
+  images:      [{ url: String, public_id: String, color: { type: String, default: '' } }],
   colors:      [String],
   sizes:       [String],
   variants:    [{ name: String, value: String }],

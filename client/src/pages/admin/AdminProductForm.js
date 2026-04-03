@@ -24,10 +24,10 @@ export default function AdminProductForm() {
     colors: [], sizes: [], tags: '',
   });
   const [existingImages, setExistingImages] = useState([]);
-  const [newFiles, setNewFiles]     = useState([]);
-  const [previews, setPreviews]     = useState([]);
-  const [removeIds, setRemoveIds]   = useState([]);
-  const [saving, setSaving]         = useState(false);
+  // newFiles: { file, preview, color }
+  const [newFiles, setNewFiles] = useState([]);
+  const [removeIds, setRemoveIds] = useState([]);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => { if (isEdit) dispatch(fetchProductById(id)); }, [id, isEdit, dispatch]);
 
@@ -47,13 +47,18 @@ export default function AdminProductForm() {
 
   const handleFiles = (e) => {
     const files = Array.from(e.target.files);
-    setNewFiles(prev => [...prev, ...files]);
-    setPreviews(prev => [...prev, ...files.map(f => URL.createObjectURL(f))]);
+    setNewFiles(prev => [
+      ...prev,
+      ...files.map(file => ({ file, preview: URL.createObjectURL(file), color: '' }))
+    ]);
   };
 
   const removeNewFile = (idx) => {
     setNewFiles(p => p.filter((_, i) => i !== idx));
-    setPreviews(p => p.filter((_, i) => i !== idx));
+  };
+
+  const setNewFileColor = (idx, color) => {
+    setNewFiles(p => p.map((item, i) => i === idx ? { ...item, color } : item));
   };
 
   const removeExisting = (img) => {
@@ -77,7 +82,12 @@ export default function AdminProductForm() {
       });
       fd.append('tags', JSON.stringify(form.tags.split(',').map(t => t.trim()).filter(Boolean)));
       if (removeIds.length) fd.append('removeImages', JSON.stringify(removeIds));
-      newFiles.forEach(f => fd.append('images', f));
+
+      // Append files + their color tags
+      const imageColors = newFiles.map(f => f.color);
+      fd.append('imageColors', JSON.stringify(imageColors));
+      newFiles.forEach(({ file }) => fd.append('images', file));
+
       if (isEdit) {
         await dispatch(updateProduct({ id, formData: fd })).unwrap();
         toast.success('Product updated!');
@@ -171,14 +181,20 @@ export default function AdminProductForm() {
 
           {/* Images */}
           <div className="admin-card">
-            <h2 className="text-xs tracking-widest uppercase font-medium mb-3">Images</h2>
+            <h2 className="text-xs tracking-widest uppercase font-medium mb-1">Images</h2>
+            <p className="text-[11px] text-gray-400 mb-3">Optionally assign a color to each image so customers see the right photo when selecting a color variant.</p>
+
+            {/* Existing images */}
             {existingImages.length > 0 && (
-              <div className="mb-3">
+              <div className="mb-4">
                 <p className="text-xs text-gray-400 mb-2">Current Images</p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
                   {existingImages.map(img => (
-                    <div key={img.public_id} className="relative group">
-                      <img src={img.url} alt="" className="w-16 h-20 md:w-20 md:h-24 object-cover bg-gray-100" />
+                    <div key={img.public_id} className="relative group w-20">
+                      <img src={img.url} alt="" className="w-20 h-24 object-cover bg-gray-100" />
+                      {img.color && (
+                        <span className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[9px] text-center py-0.5 truncate">{img.color}</span>
+                      )}
                       <button type="button" onClick={() => removeExisting(img)}
                         className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">×</button>
                     </div>
@@ -186,20 +202,39 @@ export default function AdminProductForm() {
                 </div>
               </div>
             )}
-            {previews.length > 0 && (
-              <div className="mb-3">
-                <p className="text-xs text-gray-400 mb-2">New Images</p>
-                <div className="flex flex-wrap gap-2">
-                  {previews.map((url, i) => (
-                    <div key={i} className="relative group">
-                      <img src={url} alt="" className="w-16 h-20 md:w-20 md:h-24 object-cover bg-gray-100" />
-                      <button type="button" onClick={() => removeNewFile(i)}
-                        className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">×</button>
+
+            {/* New image previews with color picker */}
+            {newFiles.length > 0 && (
+              <div className="mb-4">
+                <p className="text-xs text-gray-400 mb-2">New Images — assign a color variant (optional)</p>
+                <div className="space-y-3">
+                  {newFiles.map((item, i) => (
+                    <div key={i} className="flex items-center gap-3 p-2 border border-gray-100 rounded">
+                      <div className="relative flex-shrink-0">
+                        <img src={item.preview} alt="" className="w-14 h-16 object-cover bg-gray-100" />
+                        <button type="button" onClick={() => removeNewFile(i)}
+                          className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] flex items-center justify-center rounded-full">×</button>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-gray-500 truncate mb-1">{item.file.name}</p>
+                        <select
+                          value={item.color}
+                          onChange={e => setNewFileColor(i, e.target.value)}
+                          className="input-field !py-1 !text-xs"
+                        >
+                          <option value="">No color (show for all)</option>
+                          {form.colors.length > 0
+                            ? form.colors.map(c => <option key={c} value={c}>{c}</option>)
+                            : COLORS_LIST.map(c => <option key={c} value={c}>{c}</option>)
+                          }
+                        </select>
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
             )}
+
             <input ref={fileRef} type="file" accept="image/*" multiple onChange={handleFiles} className="hidden" />
             <button type="button" onClick={() => fileRef.current.click()}
               className="border-2 border-dashed border-gray-200 hover:border-black transition-colors p-6 w-full text-center text-sm text-gray-400 hover:text-black">
@@ -209,7 +244,7 @@ export default function AdminProductForm() {
           </div>
         </div>
 
-        {/* Sidebar - stacks below on mobile */}
+        {/* Sidebar */}
         <div className="space-y-4">
           <div className="admin-card">
             <h2 className="text-xs tracking-widest uppercase font-medium mb-3">Inventory</h2>
