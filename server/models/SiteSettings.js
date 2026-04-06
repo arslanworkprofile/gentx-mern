@@ -31,6 +31,7 @@ const siteSettingsSchema = new mongoose.Schema({
       imageUrl: { type: String, default: '' },
       publicId: { type: String, default: '' },
       active:   { type: Boolean, default: true },
+      showInNav: { type: Boolean, default: false },
       order:    { type: Number, default: 0 },
     },
   ],

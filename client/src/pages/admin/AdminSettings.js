@@ -298,7 +298,7 @@ function CategoriesManager({ settings }) {
 
   const startEdit = (cat) => {
     setEditing(cat.id);
-    setEditForm({ label: cat.label, value: cat.value, imageUrl: cat.imageUrl || '', active: cat.active });
+    setEditForm({ label: cat.label, value: cat.value, imageUrl: cat.imageUrl || '', active: cat.active, showInNav: cat.showInNav || false });
     setEditFile(null); setEditPreview('');
   };
 
@@ -313,6 +313,14 @@ function CategoriesManager({ settings }) {
       setEditing(null);
     } catch (err) { toast.error(err || 'Failed'); }
     finally { setSaving(false); }
+  };
+
+  const handleNavToggle = async (cat) => {
+    const fd = new FormData();
+    fd.append('showInNav', !cat.showInNav);
+    fd.append('label', cat.label); fd.append('value', cat.value);
+    try { await dispatch(updateCategory({ catId: cat.id, formData: fd })).unwrap(); toast.success(cat.showInNav ? 'Removed from navbar' : 'Added to navbar!'); }
+    catch (err) { toast.error(err || 'Failed'); }
   };
 
   const handleDelete = async (catId, label) => {
@@ -350,6 +358,9 @@ function CategoriesManager({ settings }) {
                     <span className={`text-[9px] tracking-widest uppercase font-bold px-2 py-0.5 ${cat.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                       {cat.active ? 'Active' : 'Hidden'}
                     </span>
+                    {cat.showInNav && (
+                      <span className="text-[9px] tracking-widest uppercase font-bold px-2 py-0.5 bg-blue-100 text-blue-700">In Nav</span>
+                    )}
                   </div>
                   <span className="text-xs text-gray-400 font-mono">/{cat.value}</span>
                 </div>
@@ -357,6 +368,11 @@ function CategoriesManager({ settings }) {
                   <button onClick={() => handleToggle(cat)}
                     className={`text-[10px] tracking-widest uppercase border px-3 py-1.5 transition-colors ${cat.active ? 'border-gray-200 text-gray-500 hover:border-red-300 hover:text-red-500' : 'border-green-200 text-green-600 hover:bg-green-50'}`}>
                     {cat.active ? 'Hide' : 'Show'}
+                  </button>
+                  <button onClick={() => handleNavToggle(cat)}
+                    className={`text-[10px] tracking-widest uppercase border px-3 py-1.5 transition-colors ${cat.showInNav ? 'bg-black text-white border-black' : 'border-gray-200 text-gray-500 hover:border-black'}`}
+                    title={cat.showInNav ? 'Remove from navbar' : 'Show in navbar'}>
+                    {cat.showInNav ? '✓ In Nav' : '+ Nav'}
                   </button>
                   <button onClick={() => editing === cat.id ? setEditing(null) : startEdit(cat)}
                     className="text-[10px] tracking-widest uppercase border border-gray-200 px-3 py-1.5 hover:border-black transition-colors">

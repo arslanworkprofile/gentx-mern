@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../store/slices/authSlice';
+import { fetchSettings } from '../../store/slices/settingsSlice';
 import { selectCartItemCount } from '../../store/slices/cartSlice';
 import toast from 'react-hot-toast';
 
@@ -16,11 +17,16 @@ export default function Navbar() {
   const location   = useLocation();
   const { user }   = useSelector(s => s.auth);
   const cartCount  = useSelector(selectCartItemCount);
+  const { settings } = useSelector(s => s.settings);
   const searchRef  = useRef(null);
   const userRef    = useRef(null);
 
   const isHome      = location.pathname === '/';
   const transparent = isHome && !scrolled;
+
+  useEffect(() => {
+    dispatch(fetchSettings());
+  }, [dispatch]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -60,12 +66,19 @@ export default function Navbar() {
     setSearchQ(''); setSearchOpen(false);
   };
 
+  // Static links always shown
+  const staticLinks = [
+    { label: 'Shop', to: '/shop' },
+  ];
+  // Dynamic links from admin settings (categories marked showInNav)
+  const categoryLinks = (settings?.categories || [])
+    .filter(c => c.active && c.showInNav)
+    .sort((a, b) => a.order - b.order)
+    .map(c => ({ label: c.label, to: `/shop?category=${c.value}` }));
   const navLinks = [
-    { label: 'Shop',        to: '/shop' },
-    { label: 'Shirts',      to: '/shop?category=shirts' },
-    { label: 'Jackets',     to: '/shop?category=jackets' },
-    { label: 'Accessories', to: '/shop?category=accessories' },
-    { label: 'About',       to: '/about' },
+    ...staticLinks,
+    ...categoryLinks,
+    { label: 'About', to: '/about' },
   ];
 
   const iconClass = `transition-colors duration-200 ${transparent ? 'text-white/80 hover:text-white' : 'text-gray-600 hover:text-black'}`;
@@ -82,13 +95,15 @@ export default function Navbar() {
         }`}
       >
         {/* Announcement bar */}
-        <div
-          className={`text-center py-2 px-4 text-[10px] tracking-[0.22em] uppercase font-medium transition-colors duration-400 ${
-            transparent ? 'text-white/60 bg-black/10' : 'text-gray-400 bg-gray-50'
-          }`}
-        >
-          Free Shipping on Orders Over $150 &nbsp;·&nbsp; Est. Delivery 3–5 Days
-        </div>
+        {(settings?.announcementBar?.active !== false) && (
+          <div
+            className={`text-center py-2 px-4 text-[10px] tracking-[0.22em] uppercase font-medium transition-colors duration-400 ${
+              transparent ? 'text-white/60 bg-black/10' : 'text-gray-400 bg-gray-50'
+            }`}
+          >
+            {settings?.announcementBar?.text || 'Free Shipping on Orders Over $150 · Est. Delivery 3–5 Days'}
+          </div>
+        )}
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
           {/* Logo */}

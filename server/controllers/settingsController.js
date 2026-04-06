@@ -151,6 +151,7 @@ exports.updateCategory = asyncHandler(async (req, res) => {
   if (req.body.value)  cat.value  = req.body.value.toLowerCase().trim();
   if (req.body.active !== undefined) cat.active = req.body.active === 'true' || req.body.active === true;
   if (req.body.order  !== undefined) cat.order  = Number(req.body.order);
+  if (req.body.showInNav !== undefined) cat.showInNav = req.body.showInNav === 'true' || req.body.showInNav === true;
 
   if (req.file) {
     cat.imageUrl = await bufferToBase64(req.file.buffer, req.file.mimetype);
