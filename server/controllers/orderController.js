@@ -11,7 +11,14 @@ exports.createOrder = asyncHandler(async (req, res) => {
     if (!p) { res.status(404); throw new Error(`Product not found: ${item.product}`); }
     if (p.stock < item.quantity) { res.status(400); throw new Error(`Insufficient stock for ${p.name}`); }
   }
-  const order = await Order.create({ user: req.user._id, orderItems, shippingAddress, paymentMethod, itemsPrice, shippingPrice, taxPrice, totalPrice });
+  const order = await Order.create({
+    user: req.user._id, orderItems, shippingAddress, paymentMethod,
+    itemsPrice, shippingPrice, taxPrice, totalPrice,
+    isPaid: true,
+    paidAt: new Date(),
+    paymentResult: { id: `PAY-${Date.now()}`, status: 'COMPLETED', update_time: new Date().toISOString(), email_address: req.user.email },
+    orderStatus: 'processing',
+  });
   for (const item of orderItems) {
     await Product.findByIdAndUpdate(item.product, { $inc: { stock: -item.quantity, sold: item.quantity } });
   }
